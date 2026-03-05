@@ -1,5 +1,7 @@
 node_modules/
-dist/
+dist/*
+!dist/FolderTidy Setup 1.0.0.exe
+!dist/FolderTidy 1.0.0.msi
 build/
 *.log
 .DS_Store
