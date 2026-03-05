@@ -25,13 +25,12 @@
 
 ## 📥 Download
 
-Anda dapat mengunduh FolderTidy untuk platform berikut:
+Anda dapat mengunduh installer **FolderTidy** versi terbaru langsung dari halaman **Releases**:
 
-- **Windows**: [Download .exe (Installer)](dist/FolderTidy%20Setup%201.0.0.exe) | [Download .msi](dist/FolderTidy_1.0.0.msi)
-- **macOS**: [Download .dmg](dist/FolderTidy-1.0.0.dmg)
-- **Linux**: [Download .AppImage](dist/FolderTidy-1.0.0.AppImage)
+👉 **[Download FolderTidy (Windows)](https://github.com/KresnaB/FolderTidy/releases/latest)**
 
-> **Catatan**: Link di atas akan aktif setelah proses build selesai.
+> [!NOTE]
+> Saat ini file instalasi (`.exe` dan `.msi`) hanya tersedia untuk **Windows**. Pengguna macOS atau Linux disarankan untuk melakukan *compile* sendiri dari source code (lihat bagian Pengembangan di bawah).
 
 ## 🛠️ Pengembangan (Development)
 
