@@ -1,0 +1,39 @@
+{
+    "name": "folder-tidy",
+    "version": "1.0.0",
+    "description": "A quick and reliable file organizer built with Electron.",
+    "main": "main.js",
+    "author": "Antigravity",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder build --win --publish never"
+    },
+    "build": {
+        "appId": "com.foldertidy.app",
+        "productName": "FolderTidy",
+        "copyright": "Copyright © 2026 Antigravity",
+        "directories": {
+            "output": "dist"
+        },
+        "win": {
+            "icon": "build/icon.png",
+            "publisherName": "Antigravity",
+            "target": [
+                "nsis",
+                "msi"
+            ]
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true
+        },
+        "msi": {
+            "oneClick": false,
+            "perMachine": true
+        }
+    },
+    "devDependencies": {
+        "electron": "^34.2.0",
+        "electron-builder": "25.1.8"
+    }
+}
