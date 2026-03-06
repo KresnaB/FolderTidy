@@ -31,6 +31,9 @@
 5. **Execute**: Click "Tidy Now!" to start moving the files.
 6. **Undo**: If needed, click the "Undo" button in the top right.
 
+### 📄 License
+This project is licensed under the **MIT License**. Check the [LICENSE](LICENSE) file for details.
+
 ---
 
 ## Bahasa Indonesia
@@ -60,6 +63,9 @@
 5. **Eksekusi**: Klik "Rapikan Sekarang!" untuk mulai memindahkan file.
 6. **Batal (Undo)**: Jika diperlukan, klik tombol "Undo" di kanan atas untuk membatalkan proses terakhir.
 
+### 📄 Lisensi
+Proyek ini dilisensikan di bawah **MIT License**. Lihat file [LICENSE](LICENSE) untuk detailnya.
+
 ---
 
 ## 📥 Download
@@ -88,4 +94,3 @@ npm run build
 ```
 
 ---
-Made with ❤️ by Antigravity.

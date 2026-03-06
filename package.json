@@ -4,6 +4,7 @@
     "description": "A quick and reliable file organizer built with Electron.",
     "main": "main.js",
     "author": "Antigravity",
+    "license": "MIT",
     "scripts": {
         "start": "electron .",
         "build": "electron-builder build --win --publish never"
