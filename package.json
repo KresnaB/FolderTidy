@@ -3,7 +3,7 @@
     "version": "1.1.0",
     "description": "A quick and reliable file organizer built with Electron.",
     "main": "main.js",
-    "author": "Antigravity",
+    "author": "KresnaB",
     "license": "MIT",
     "scripts": {
         "start": "electron .",
@@ -20,13 +20,13 @@
     "build": {
         "appId": "com.foldertidy.app",
         "productName": "FolderTidy",
-        "copyright": "Copyright © 2026 Antigravity",
+        "copyright": "Copyright © 2026 KresnaB",
         "directories": {
             "output": "dist"
         },
         "win": {
             "icon": "build/FTlogo.png",
-            "publisherName": "Antigravity",
+            "publisherName": "KresnaB",
             "target": [
                 "nsis",
                 "msi"

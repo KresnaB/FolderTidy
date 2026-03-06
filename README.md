@@ -93,4 +93,4 @@ npm start
 npm run build
 ```
 
----
+Made with ❤️ by KresnaB.
