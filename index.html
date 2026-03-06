@@ -13,10 +13,17 @@
   <div class="app-container">
     <header>
       <div class="header-left">
-        <h1>🗂️ FolderTidy</h1>
-        <p>Rapikan file dalam hitungan detik.</p>
+        <h1 data-i18n="app-title">🗂️ FolderTidy</h1>
+        <p data-i18n="app-subtitle">Rapikan file dalam hitungan detik.</p>
       </div>
-      <button id="btn-undo" class="btn undo-btn" disabled title="Batalkan operasi terakhir">↩ Undo</button>
+      <div class="header-right">
+        <div class="lang-toggle">
+          <button id="lang-en" class="lang-btn active">EN</button>
+          <button id="lang-id" class="lang-btn">ID</button>
+        </div>
+        <button id="btn-undo" class="btn undo-btn" disabled title="Batalkan operasi terakhir" data-i18n="btn-undo">↩
+          Undo</button>
+      </div>
     </header>
 
     <main>
@@ -24,10 +31,10 @@
       <section class="step">
         <div class="step-header">
           <span class="step-number">1</span>
-          <h2>Pilih Folder Target</h2>
+          <h2 data-i18n="step1-title">Pilih Folder Target</h2>
         </div>
         <div class="folder-selection">
-          <button id="btn-select-folder" class="btn primary-btn">📂 Pilih Folder</button>
+          <button id="btn-select-folder" class="btn primary-btn" data-i18n="btn-select">📂 Pilih Folder</button>
           <div id="selected-folder-path" class="path-display hidden"></div>
         </div>
       </section>
@@ -36,54 +43,59 @@
       <section class="step">
         <div class="step-header">
           <span class="step-number">2</span>
-          <h2>Mode Organisasi</h2>
+          <h2 data-i18n="step2-title">Mode Organisasi</h2>
         </div>
         <div class="mode-selection">
           <label class="radio-card">
             <input type="radio" name="mode" value="type" checked>
             <div class="card-content">
-              <h3>🗂️ Berdasarkan Tipe</h3>
-              <p>Dokumen, Gambar, Video, dll.</p>
+              <h3 data-i18n="mode-type-title">🗂️ Berdasarkan Tipe</h3>
+              <p data-i18n="mode-type-desc">Dokumen, Gambar, Video, dll.</p>
             </div>
           </label>
           <label class="radio-card">
             <input type="radio" name="mode" value="time">
             <div class="card-content">
-              <h3>📅 Berdasarkan Waktu</h3>
-              <p>Dikelompokkan ke Bulan-Tahun.</p>
+              <h3 data-i18n="mode-time-title">📅 Berdasarkan Waktu</h3>
+              <p data-i18n="mode-time-desc">Dikelompokkan ke Bulan-Tahun.</p>
             </div>
           </label>
           <label class="radio-card">
-            <input type="radio" name="mode" value="alphabet">
+            <input type="radio" name="mode" value="size">
             <div class="card-content">
-              <h3>🔤 Berdasarkan Abjad</h3>
-              <p>A-C, D-F, dst.</p>
+              <h3 data-i18n="mode-size-title">⚖️ Berdasarkan Ukuran</h3>
+              <p data-i18n="mode-size-desc">Kecil, Menengah, Besar.</p>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="mode" value="custom">
+            <div class="card-content">
+              <h3 data-i18n="mode-custom-title">🛠️ Aturan Kustom</h3>
+              <p data-i18n="mode-custom-desc">Gunakan kata kunci sendiri.</p>
             </div>
           </label>
         </div>
+
+        <!-- Custom Rules UI (initially hidden) -->
+        <div id="custom-rules-section" class="custom-rules-area hidden">
+          <p class="step-desc" data-i18n="custom-rules-desc">Jika nama file mengandung kata kunci tertentu, pindahkan ke
+            folder pilihan Anda.</p>
+          <div id="rules-list" class="rules-list"></div>
+          <button id="btn-add-rule" class="btn ghost-btn" data-i18n="btn-add-rule">+ Tambah Aturan</button>
+        </div>
       </section>
 
-      <!-- STEP 3: Custom Rules -->
+
+
+      <!-- STEP 3: Preview -->
       <section class="step">
         <div class="step-header">
           <span class="step-number">3</span>
-          <h2>Aturan Kustom</h2>
-          <span class="optional-badge">Opsional</span>
-        </div>
-        <p class="step-desc">Jika nama file mengandung kata kunci tertentu, pindahkan ke folder pilihan Anda.</p>
-        <div id="rules-list" class="rules-list"></div>
-        <button id="btn-add-rule" class="btn ghost-btn">+ Tambah Aturan</button>
-      </section>
-
-      <!-- STEP 4: Preview -->
-      <section class="step">
-        <div class="step-header">
-          <span class="step-number">4</span>
-          <h2>Pratinjau & Eksekusi</h2>
+          <h2 data-i18n="step3-title">Pratinjau & Eksekusi</h2>
         </div>
         <div class="action-row">
-          <button id="btn-preview" class="btn secondary-btn" disabled>🔍 Pratinjau</button>
-          <button id="btn-execute" class="btn action-btn" disabled>✨ Rapikan Sekarang!</button>
+          <button id="btn-preview" class="btn secondary-btn" disabled data-i18n="btn-preview">🔍 Pratinjau</button>
+          <button id="btn-execute" class="btn action-btn" disabled data-i18n="btn-execute">✨ Rapikan Sekarang!</button>
         </div>
 
         <!-- Preview Table -->
@@ -91,7 +103,7 @@
           <div class="preview-header">
             <span id="preview-count" class="badge"></span>
             <label class="select-all-label">
-              <input type="checkbox" id="chk-select-all" checked> Pilih Semua
+              <input type="checkbox" id="chk-select-all" checked> <span data-i18n="select-all">Pilih Semua</span>
             </label>
           </div>
           <div class="table-wrapper">
@@ -99,8 +111,8 @@
               <thead>
                 <tr>
                   <th class="col-check"><input type="checkbox" id="chk-header" checked></th>
-                  <th>Nama File</th>
-                  <th>→ Folder Tujuan</th>
+                  <th data-i18n="table-filename">Nama File</th>
+                  <th data-i18n="table-dest">→ Folder Tujuan</th>
                 </tr>
               </thead>
               <tbody id="preview-body"></tbody>
@@ -111,8 +123,8 @@
         <!-- Log Output -->
         <div id="progress-container" class="progress-box hidden">
           <div class="progress-header">
-            <h3>Log Proses</h3>
-            <span id="progress-status" class="badge">Berjalan...</span>
+            <h3 data-i18n="log-title">Log Proses</h3>
+            <span id="progress-status" class="badge" data-i18n="status-running">Berjalan...</span>
           </div>
           <div id="log-output" class="log-window"></div>
         </div>

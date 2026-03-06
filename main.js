@@ -19,6 +19,7 @@ function createWindow() {
             nodeIntegration: false,
         },
         autoHideMenuBar: true,
+        icon: path.join(__dirname, 'build', 'FTlogo.svg'),
     });
 
     mainWindow.loadFile('index.html');
@@ -44,7 +45,7 @@ ipcMain.handle('dialog:openDirectory', async () => {
 });
 
 // --- IPC: Preview (Dry Run) ---
-ipcMain.handle('organize:preview', async (_event, { folderPath, mode, customRules }) => {
+ipcMain.handle('organize:preview', async (_event, { folderPath, mode, customRules, lang }) => {
     const files = await fsPromises.readdir(folderPath, { withFileTypes: true });
     const preview = [];
 
@@ -53,18 +54,24 @@ ipcMain.handle('organize:preview', async (_event, { folderPath, mode, customRule
 
         const fileName = dirent.name;
         const filePath = path.join(folderPath, fileName);
-        let targetFolder = 'Lainnya';
+        let targetFolder = lang === 'id' ? 'Lainnya' : 'Others';
 
-        // Custom rules take priority
         const matchedRule = matchCustomRule(fileName, customRules || []);
-        if (matchedRule) {
-            targetFolder = matchedRule;
+
+        if (mode === 'custom') {
+            if (matchedRule) {
+                targetFolder = matchedRule;
+            } else {
+                targetFolder = lang === 'id' ? 'Lainnya' : 'Others';
+            }
         } else if (mode === 'type') {
-            targetFolder = getCategoryByType(fileName);
+            targetFolder = getCategoryByType(fileName, lang);
         } else if (mode === 'time') {
-            targetFolder = await getCategoryByTime(filePath);
+            targetFolder = await getCategoryByTime(filePath, lang);
         } else if (mode === 'alphabet') {
-            targetFolder = getCategoryByAlphabet(fileName);
+            targetFolder = getCategoryByAlphabet(fileName, lang);
+        } else if (mode === 'size') {
+            targetFolder = await getCategoryBySize(filePath, lang);
         }
 
         preview.push({ fileName, filePath, targetFolder });
@@ -205,18 +212,52 @@ async function getUniqueFilePath(destDir, originalName) {
 }
 
 function matchCustomRule(fileName, customRules) {
+    const ext = path.extname(fileName).toLowerCase();
+    const nameLower = fileName.toLowerCase();
+
     for (const rule of customRules) {
         if (!rule.keyword || !rule.targetFolder) continue;
-        if (fileName.toLowerCase().includes(rule.keyword.toLowerCase())) {
-            return rule.targetFolder;
+        const type = rule.type || 'keyword';
+        const keywords = Array.isArray(rule.keyword) ? rule.keyword : [rule.keyword];
+
+        for (let kw of keywords) {
+            const ruleKeyword = kw.toLowerCase();
+
+            if (type === 'keyword') {
+                if (nameLower.includes(ruleKeyword)) return rule.targetFolder;
+            } else if (type === 'extension') {
+                const ruleExt = ruleKeyword.startsWith('.') ? ruleKeyword : `.${ruleKeyword}`;
+                if (ext === ruleExt) return rule.targetFolder;
+            } else if (type === 'both') {
+                const parts = kw.split(/\s+/);
+                if (parts.length >= 2) {
+                    const k = parts[0].toLowerCase();
+                    const e = parts[1].startsWith('.') ? parts[1].toLowerCase() : `.${parts[1].toLowerCase()}`;
+                    if (nameLower.includes(k) && ext === e) return rule.targetFolder;
+                } else {
+                    if (nameLower.includes(ruleKeyword)) return rule.targetFolder;
+                }
+            }
         }
     }
     return null;
 }
 
-function getCategoryByType(fileName) {
+function getCategoryByType(fileName, lang) {
     const ext = path.extname(fileName).toLowerCase();
-    const categories = {
+
+    // Define localized categories
+    const categoriesEN = {
+        'Documents': ['.pdf', '.doc', '.docx', '.txt', '.xlsx', '.csv', '.ppt', '.pptx', '.odt', '.rtf'],
+        'Images': ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.bmp', '.tiff', '.ico'],
+        'Videos': ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm'],
+        'Audio': ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a'],
+        'Applications': ['.exe', '.msi', '.dmg', '.apk', '.deb', '.rpm'],
+        'Archives': ['.zip', '.rar', '.7z', '.tar', '.gz', '.bz2'],
+        'Code': ['.js', '.ts', '.py', '.java', '.html', '.css', '.json', '.xml', '.sh', '.bat']
+    };
+
+    const categoriesID = {
         'Dokumen': ['.pdf', '.doc', '.docx', '.txt', '.xlsx', '.csv', '.ppt', '.pptx', '.odt', '.rtf'],
         'Gambar': ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.bmp', '.tiff', '.ico'],
         'Video': ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm'],
@@ -225,21 +266,29 @@ function getCategoryByType(fileName) {
         'Arsip': ['.zip', '.rar', '.7z', '.tar', '.gz', '.bz2'],
         'Kode': ['.js', '.ts', '.py', '.java', '.html', '.css', '.json', '.xml', '.sh', '.bat']
     };
+
+    const categories = lang === 'id' ? categoriesID : categoriesEN;
+
     for (const [category, extensions] of Object.entries(categories)) {
         if (extensions.includes(ext)) return category;
     }
-    return 'Lainnya';
+    return lang === 'id' ? 'Lainnya' : 'Others';
 }
 
-async function getCategoryByTime(filePath) {
+async function getCategoryByTime(filePath, lang) {
     const stats = await fsPromises.stat(filePath);
     const date = new Date(stats.mtime);
-    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+
+    const monthsEN = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthsID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+    const months = lang === 'id' ? monthsID : monthsEN;
     return `${months[date.getMonth()]}-${date.getFullYear()}`;
 }
 
-function getCategoryByAlphabet(fileName) {
+function getCategoryByAlphabet(fileName, lang) {
     const c = fileName.charAt(0).toUpperCase();
     if (/[A-C]/.test(c)) return 'A-C';
     if (/[D-F]/.test(c)) return 'D-F';
@@ -249,5 +298,20 @@ function getCategoryByAlphabet(fileName) {
     if (/[P-S]/.test(c)) return 'P-S';
     if (/[T-V]/.test(c)) return 'T-V';
     if (/[W-Z]/.test(c)) return 'W-Z';
-    return 'Simbol & Angka';
+    return lang === 'id' ? 'Simbol & Angka' : 'Symbols & Numbers';
+}
+
+async function getCategoryBySize(filePath, lang) {
+    const stats = await fsPromises.stat(filePath);
+    const sizeInBytes = stats.size;
+    const sizeInMB = sizeInBytes / (1024 * 1024);
+    const sizeInGB = sizeInMB / 1024;
+
+    if (sizeInGB >= 1) {
+        return lang === 'id' ? 'Besar (Diatas 1GB)' : 'Large (Over 1GB)';
+    } else if (sizeInMB >= 100) {
+        return lang === 'id' ? 'Menengah (100MB - 1GB)' : 'Medium (100MB - 1GB)';
+    } else {
+        return lang === 'id' ? 'Kecil (Dibawah 100MB)' : 'Small (Under 100MB)';
+    }
 }
